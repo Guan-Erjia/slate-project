@@ -5,19 +5,7 @@ import { BaseEditor, Editor, Transforms } from "slate";
 import { useSlate, useSlateStatic } from "slate-react";
 import imageExtensions from "image-extensions";
 import { isBlockActive, toggleBlock } from "./utils";
-const Icon = (props: HtmlHTMLAttributes<HTMLSpanElement>) => (
-  <span
-    {...props}
-    className={cx(
-      "material-icons",
-      props.className,
-      css`
-        font-size: 18px;
-        vertical-align: text-bottom;
-      `
-    )}
-  />
-);
+
 const Button = (
   props: HtmlHTMLAttributes<HTMLButtonElement> & {
     reversed?: boolean;
@@ -57,7 +45,7 @@ const MarkButton = (props: { format: string; icon: string }) => {
         }
       }}
     >
-      <Icon>{props.icon}</Icon>
+      <span className="material-icons">{props.icon}</span>
     </Button>
   );
 };
@@ -89,7 +77,7 @@ const InsertImageButton = () => {
         url && insertImage(editor, url);
       }}
     >
-      <Icon>image</Icon>
+      <span className="material-icons">image</span>
     </Button>
   );
 };
@@ -115,7 +103,34 @@ const BlockButton = (props: {
         });
       }}
     >
-      <Icon>{props.icon}</Icon>
+      <span className="material-icons"> {props.icon}</span>
+    </Button>
+  );
+};
+
+const AlignButton = (props: {
+  format: string;
+  icon: string;
+  depth?: number;
+  ordered?: boolean;
+}) => {
+  const editor = useSlate();
+
+  return (
+    <Button
+      active={isBlockActive(editor, props.format, {
+        depth: props.depth,
+        ordered: props.ordered,
+      })}
+      onMouseDown={(event) => {
+        event.preventDefault();
+        toggleBlock(editor, props.format, {
+          depth: props.depth,
+          ordered: props.ordered,
+        });
+      }}
+    >
+      <span className="material-icons"> {props.icon}</span>
     </Button>
   );
 };
@@ -145,6 +160,10 @@ export default function Menu() {
       <BlockButton format="blockquote" icon="format_quote" />
       <BlockButton format="list" ordered={true} icon="format_list_numbered" />
       <BlockButton format="list" ordered={false} icon="format_list_bulleted" />
+      <AlignButton format="left" icon="format_align_left" />
+      <AlignButton format="center" icon="format_align_center" />
+      <AlignButton format="right" icon="format_align_right" />
+      <AlignButton format="justify" icon="format_align_justify" />
       <InsertImageButton />
     </div>
   );
