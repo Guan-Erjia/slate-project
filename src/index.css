@@ -29,11 +29,6 @@ body {
   min-height: 100vh;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -137,27 +132,6 @@ input:focus {
   border-color: blue;
 }
 
-iframe {
-  width: 100%;
-  border: 1px solid #eee;
-}
-
-[data-slate-editor] > * + * {
-  margin-top: 1em;
-}
-
-.fancy {
-  background-color: rgb(218, 225, 255);
-  padding: 40px;
-  font-size: 20px;
-  min-height: 150px;
-  outline: 3px dashed rgb(0, 94, 128);
-  border-radius: 20px;
-  outline-offset: -20px;
-  white-space: pre-wrap;
-}
-
-/* fallback */
 @font-face {
   font-family: "Material Icons";
   font-style: normal;

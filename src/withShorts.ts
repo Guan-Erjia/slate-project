@@ -1,13 +1,14 @@
 import {
-  BaseEditor,
   Editor,
   Range,
   Transforms,
   Element as SlateElement,
+  Point,
 } from "slate";
 import { SHORTCUTS } from "./utils";
+import { ReactEditor } from "slate-react";
 
-export const withShortcuts = (editor: BaseEditor) => {
+export const withShortcuts = (editor: ReactEditor): ReactEditor => {
   const { deleteBackward, insertText } = editor;
 
   editor.insertText = (text) => {
@@ -42,16 +43,19 @@ export const withShortcuts = (editor: BaseEditor) => {
         });
 
         if (type === "listItem") {
-          const list = {
-            type: "list",
-            children: [],
-          };
-          Transforms.wrapNodes(editor, list, {
-            match: (n) =>
-              !Editor.isEditor(n) &&
-              SlateElement.isElement(n) &&
-              n.type === "listItem",
-          });
+          Transforms.wrapNodes(
+            editor,
+            {
+              type: "list",
+              children: [],
+            },
+            {
+              match: (n) =>
+                !Editor.isEditor(n) &&
+                SlateElement.isElement(n) &&
+                n.type === "listItem",
+            }
+          );
         }
 
         return;
@@ -89,7 +93,7 @@ export const withShortcuts = (editor: BaseEditor) => {
               match: (n) =>
                 !Editor.isEditor(n) &&
                 SlateElement.isElement(n) &&
-                n.type === "*list",
+                n.type === "list",
               split: true,
             });
           }

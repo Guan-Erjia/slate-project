@@ -64,7 +64,7 @@ const MarkButton = (props: { format: string; icon: string }) => {
 
 const isImageUrl = (url: string | URL) => {
   if (!url) return false;
-  const ext = new URL(url).pathname.split(".").pop();
+  const ext = new URL(url).pathname.split(".").pop() || "";
   return imageExtensions.includes(ext);
 };
 const insertImage = (editor: BaseEditor, url: string) => {

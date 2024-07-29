@@ -1,11 +1,6 @@
 import { RenderElementProps } from "slate-react";
-import { MarkdownElement } from "./utils";
 
-export function renderElement(
-  props: Omit<RenderElementProps, "element"> & {
-    element: MarkdownElement;
-  }
-) {
+export function renderElement(props: RenderElementProps): JSX.Element {
   const { attributes, children, element } = props;
   switch (element.type) {
     case "blockquote":
