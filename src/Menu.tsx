@@ -1,34 +1,26 @@
 import { css, cx } from "@emotion/css";
-import { omit } from "lodash-es";
-import { HtmlHTMLAttributes } from "react";
+import { MouseEventHandler, ReactNode } from "react";
 import { BaseEditor, Editor, Transforms } from "slate";
 import { useSlate, useSlateStatic } from "slate-react";
 import imageExtensions from "image-extensions";
 import { isBlockActive, toggleBlock } from "./utils";
 
-const Button = (
-  props: HtmlHTMLAttributes<HTMLButtonElement> & {
-    reversed?: boolean;
-    active?: boolean;
-  }
-) => (
+const Button = (props: {
+  onMouseDown: MouseEventHandler;
+  active?: boolean;
+  children?: ReactNode;
+}) => (
   <span
-    {...omit(props, "reversed", "active")}
-    className={cx(
-      props.className,
-      css`
-        cursor: pointer;
-        color: ${props.reversed
-          ? props.active
-            ? "white"
-            : "#aaa"
-          : props.active
-          ? "black"
-          : "#ccc"};
-      `
-    )}
-  />
+    onMouseDown={props.onMouseDown}
+    style={{
+      cursor: "pointer",
+      color: props.active ? "black" : "#ccc",
+    }}
+  >
+    {props.children}
+  </span>
 );
+
 const MarkButton = (props: { format: string; icon: string }) => {
   const editor = useSlate();
   const marks = Editor.marks(editor);
@@ -67,6 +59,7 @@ const InsertImageButton = () => {
   const editor = useSlateStatic();
   return (
     <Button
+      active
       onMouseDown={(event) => {
         event.preventDefault();
         const url = window.prompt("Enter the URL of the image:");
@@ -89,12 +82,15 @@ const BlockButton = (props: {
 }) => {
   const editor = useSlate();
 
+  const active =
+    props.format === "list" ||
+    isBlockActive(editor, props.format, {
+      depth: props.depth,
+      ordered: props.ordered,
+    });
   return (
     <Button
-      active={isBlockActive(editor, props.format, {
-        depth: props.depth,
-        ordered: props.ordered,
-      })}
+      active={active}
       onMouseDown={(event) => {
         event.preventDefault();
         toggleBlock(editor, props.format, {
@@ -108,32 +104,6 @@ const BlockButton = (props: {
   );
 };
 
-const AlignButton = (props: {
-  format: string;
-  icon: string;
-  depth?: number;
-  ordered?: boolean;
-}) => {
-  const editor = useSlate();
-
-  return (
-    <Button
-      active={isBlockActive(editor, props.format, {
-        depth: props.depth,
-        ordered: props.ordered,
-      })}
-      onMouseDown={(event) => {
-        event.preventDefault();
-        toggleBlock(editor, props.format, {
-          depth: props.depth,
-          ordered: props.ordered,
-        });
-      }}
-    >
-      <span className="material-icons"> {props.icon}</span>
-    </Button>
-  );
-};
 export default function Menu() {
   return (
     <div
@@ -160,10 +130,6 @@ export default function Menu() {
       <BlockButton format="blockquote" icon="format_quote" />
       <BlockButton format="list" ordered={true} icon="format_list_numbered" />
       <BlockButton format="list" ordered={false} icon="format_list_bulleted" />
-      <AlignButton format="left" icon="format_align_left" />
-      <AlignButton format="center" icon="format_align_center" />
-      <AlignButton format="right" icon="format_align_right" />
-      <AlignButton format="justify" icon="format_align_justify" />
       <InsertImageButton />
     </div>
   );
